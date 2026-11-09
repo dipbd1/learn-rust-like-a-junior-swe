@@ -1,0 +1,226 @@
+[
+  {
+    "id": "01-hello-cargo",
+    "title": "1. Hello, Rustacean! (Macros & Printing)",
+    "category": "1. Fundamentals",
+    "difficulty": "beginner",
+    "summary": "Write your first Rust code using the println! macro and formatted string placeholders.",
+    "theory": "### Welcome to Rust! 🦀\n\nIn Rust, every standalone executable begins execution at the `main` function:\n\n```rust\nfn main() {\n    println!(\"Hello, world!\");\n}\n```\n\n#### Why is there an exclamation mark in `println!`?\nIn Rust, an exclamation mark denotes a **macro** call rather than a standard function.\n- Macros run at compile time and expand into complex code.\n- `println!` does compile-time format-string verification, meaning if you pass the wrong number or type of arguments, the compiler catches it **before** your program ever runs!\n\n#### String Formatting Syntax\nYou can insert variables and values into strings using curly braces `{}`:\n\n```rust\nlet name = \"Ferris\";\nlet age = 5;\nprintln!(\"Name: {}, Age: {}\", name, age);\n```\n\nYou can also use positional and named arguments:\n```rust\nprintln!(\"{0} is {1} and {0} loves Rust!\", \"Ferris\", \"a crab\");\n```",
+    "requirements": [
+      "Define a function `greet(name: &str) -> String` that returns `\"Hello, <name>! Welcome to Rust.\"`",
+      "Inside `main()`, print the result of calling `greet(\"Ferris\")` using `println!`",
+      "Ensure the program compiles cleanly with no errors"
+    ],
+    "hints": [
+      "Clue 1: A function in Rust is declared using `fn name(param: Type) -> ReturnType { ... }`.",
+      "Clue 2: You can construct a new owned `String` using the `format!` macro: `format!(\"Hello, {}! Welcome to Rust.\", name)`.",
+      "Clue 3: Remember that in Rust, the last expression in a function without a semicolon `;` is returned automatically!"
+    ],
+    "starterCode": "// Challenge 1: Hello, Rustacean!\n// Implement the greet function and call it in main().\n\npub fn greet(name: &str) -> String {\n    // TODO: Return format!(\"Hello, {}! Welcome to Rust.\", name);\n    todo!(\"Implement greet\")\n}\n\nfn main() {\n    // TODO: Call greet(\"Ferris\") and print it with println!\n}\n",
+    "solutionCode": "pub fn greet(name: &str) -> String {\n    format!(\"Hello, {}! Welcome to Rust.\", name)\n}\n\nfn main() {\n    let message = greet(\"Ferris\");\n    println!(\"{}\", message);\n}\n",
+    "testCode": "\n#[cfg(test)]\nmod tests {\n    use super::*;\n\n    #[test]\n    fn test_greet_ferris() {\n        assert_eq!(greet(\"Ferris\"), \"Hello, Ferris! Welcome to Rust.\");\n    }\n\n    #[test]\n    fn test_greet_alice() {\n        assert_eq!(greet(\"Alice\"), \"Hello, Alice! Welcome to Rust.\");\n    }\n}\n",
+    "validationMode": "tests"
+  },
+  {
+    "id": "02-variables-mutability",
+    "title": "2. Variables & Mutability (`mut`)",
+    "category": "1. Fundamentals",
+    "difficulty": "beginner",
+    "summary": "Master Rust’s core philosophy: variables are strictly immutable by default.",
+    "theory": "### Immutability by Default\n\nIn most languages (like Python, JS, C++), variables can be reassigned freely. In Rust, variables declared with `let` are **immutable by default**:\n\n```rust\nlet x = 5;\nx = 6; // ❌ COMPILE ERROR: cannot assign twice to immutable variable `x`\n```\n\nTo make a variable mutable, you must explicitly opt in with `mut`:\n\n```rust\nlet mut x = 5;\nx = 6; // ✅ Allowed!\n```\n\n#### Why does Rust do this?\n1. **Safety & Concurrency**: If data cannot change, multiple threads can safely read it without locks or data races.\n2. **Intentional Design**: When reading Rust code, seeing `mut` immediately signals: \"Pay attention! This value will mutate.\"",
+    "requirements": [
+      "Implement `calculate_tally(base: i32, additions: &[i32]) -> i32`",
+      "Use a mutable variable `let mut total = base;` to accumulate the values",
+      "Loop over `additions` and add each item to `total`",
+      "Return the final accumulated total"
+    ],
+    "hints": [
+      "Clue 1: Declare your running accumulator with `let mut total = base;`.",
+      "Clue 2: You can iterate over a slice using `for &item in additions { total += item; }`.",
+      "Clue 3: End the function with `total` (no semicolon) to return it."
+    ],
+    "starterCode": "// Challenge 2: Variables & Mutability\n// Fix mutability and accumulate the slice into the base value.\n\npub fn calculate_tally(base: i32, additions: &[i32]) -> i32 {\n    // TODO: Create a mutable variable 'total' initialized with 'base'\n    let total = base;\n\n    for &val in additions {\n        // This will fail to compile until you make 'total' mutable!\n        total += val;\n    }\n\n    total\n}\n\nfn main() {\n    let nums = [10, 20, 30];\n    let result = calculate_tally(100, &nums);\n    println!(\"Final tally: {}\", result);\n}\n",
+    "solutionCode": "pub fn calculate_tally(base: i32, additions: &[i32]) -> i32 {\n    let mut total = base;\n    for &val in additions {\n        total += val;\n    }\n    total\n}\n\nfn main() {\n    let nums = [10, 20, 30];\n    let result = calculate_tally(100, &nums);\n    println!(\"Final tally: {}\", result);\n}\n",
+    "testCode": "\n#[cfg(test)]\nmod tests {\n    use super::*;\n\n    #[test]\n    fn test_positive_additions() {\n        assert_eq!(calculate_tally(10, &[5, 15, 20]), 50);\n    }\n\n    #[test]\n    fn test_empty_additions() {\n        assert_eq!(calculate_tally(42, &[]), 42);\n    }\n\n    #[test]\n    fn test_negative_values() {\n        assert_eq!(calculate_tally(100, &[-20, -30]), 50);\n    }\n}\n",
+    "validationMode": "tests"
+  },
+  {
+    "id": "03-shadowing-constants",
+    "title": "3. Variable Shadowing & `const`",
+    "category": "1. Fundamentals",
+    "difficulty": "beginner",
+    "summary": "Discover how shadowing allows re-binding variable names and even changing types cleanly.",
+    "theory": "### Shadowing vs Mutability\n\nIn Rust, you can declare a new variable with the same name as a previous variable. We say that the second variable **shadows** the first:\n\n```rust\nlet spaces = \"   \"; // spaces is of type &str\nlet spaces = spaces.len(); // spaces is now of type usize!\n```\n\n#### Key Differences:\n- **Shadowing with `let`**: Creates a *brand-new variable*. You can transform the type and preserve immutability afterwards.\n- **Mutability with `mut`**: Mutates the *same* variable in place. You cannot change its type!\n\n#### Constants (`const`)\nConstants are bound at compile time and must always have an explicit type annotation:\n```rust\nconst MAX_POINTS: u32 = 100_000;\n```",
+    "requirements": [
+      "Implement `parse_and_scale(raw_input: &str, multiplier: i32) -> i32`",
+      "Trim the string, then shadow `raw_input` to an integer parsed with `raw_input.trim().parse::<i32>().unwrap_or(0)`",
+      "Return the parsed integer multiplied by `multiplier`"
+    ],
+    "hints": [
+      "Clue 1: You can trim whitespace using `.trim()`.",
+      "Clue 2: Shadow the variable with: `let val: i32 = raw_input.trim().parse().unwrap_or(0);`.",
+      "Clue 3: Return `val * multiplier`."
+    ],
+    "starterCode": "// Challenge 3: Shadowing\n// Use variable shadowing to parse a string into an integer and multiply it.\n\npub fn parse_and_scale(raw_input: &str, multiplier: i32) -> i32 {\n    // 1. Trim the raw_input string\n    // 2. Shadow it as a parsed i32\n    // 3. Return the scaled number\n    todo!()\n}\n\nfn main() {\n    let result = parse_and_scale(\"  42  \", 2);\n    println!(\"Scaled result: {}\", result);\n}\n",
+    "solutionCode": "pub fn parse_and_scale(raw_input: &str, multiplier: i32) -> i32 {\n    let parsed: i32 = raw_input.trim().parse().unwrap_or(0);\n    parsed * multiplier\n}\n\nfn main() {\n    let result = parse_and_scale(\"  42  \", 2);\n    println!(\"Scaled result: {}\", result);\n}\n",
+    "testCode": "\n#[cfg(test)]\nmod tests {\n    use super::*;\n\n    #[test]\n    fn test_valid_number() {\n        assert_eq!(parse_and_scale(\"  15  \", 3), 45);\n    }\n\n    #[test]\n    fn test_invalid_fallback() {\n        assert_eq!(parse_and_scale(\"abc\", 5), 0);\n    }\n}\n",
+    "validationMode": "tests"
+  },
+  {
+    "id": "04-ownership-moves",
+    "title": "4. Ownership & Move Semantics",
+    "category": "2. Ownership & Memory",
+    "difficulty": "intermediate",
+    "summary": "Understand Rust’s crowning innovation: memory safety without a garbage collector.",
+    "theory": "### The Three Rules of Ownership\n\n1. **Each value in Rust has an owner.**\n2. **There can only be one owner at a time.**\n3. **When the owner goes out of scope, the value will be dropped (freed from memory).**\n\n#### Stack vs Heap\n- Primitive types with a known, fixed size at compile time (like `i32`, `bool`, `f64`) implement the `Copy` trait and are duplicated automatically on the **Stack**.\n- Dynamic types with variable size (like `String`, `Vec<T>`) store their data on the **Heap**.\n\n```rust\nlet s1 = String::from(\"hello\");\nlet s2 = s1; // ⚠️ s1 is MOVED to s2! s1 is no longer valid!\n\n// println!(\"{}\", s1); // ❌ COMPILE ERROR: borrow of moved value: s1\n```\n\nTo keep both, you must explicitly deep-copy heap data using `.clone()`:\n```rust\nlet s2 = s1.clone(); // ✅ Both s1 and s2 are valid\n```",
+    "requirements": [
+      "Write `take_and_return_ownership(s: String, suffix: &str) -> String` that takes ownership of `s`, appends `suffix`, and returns the modified `String`",
+      "Write `duplicate_data(s: &String) -> (String, String)` that returns two separate owned copies of `s`",
+      "Verify that all memory transfers satisfy Rust ownership rules"
+    ],
+    "hints": [
+      "Clue 1: In `take_and_return_ownership`, you can make `mut s: String` in the parameter list or do `let mut s = s;`.",
+      "Clue 2: Use `s.push_str(suffix)` to append a string slice to an owned String.",
+      "Clue 3: For `duplicate_data`, call `s.clone()` to produce independent heap-allocated copies."
+    ],
+    "starterCode": "// Challenge 4: Ownership & Move Semantics\n\npub fn take_and_return_ownership(mut s: String, suffix: &str) -> String {\n    // TODO: Append suffix to s and return s\n    todo!()\n}\n\npub fn duplicate_data(s: &String) -> (String, String) {\n    // TODO: Return a tuple of two independent cloned Strings\n    todo!()\n}\n\nfn main() {\n    let name = String::from(\"Rust\");\n    let result = take_and_return_ownership(name, \"acean\");\n    println!(\"Appended: {}\", result);\n}\n",
+    "solutionCode": "pub fn take_and_return_ownership(mut s: String, suffix: &str) -> String {\n    s.push_str(suffix);\n    s\n}\n\npub fn duplicate_data(s: &String) -> (String, String) {\n    (s.clone(), s.clone())\n}\n\nfn main() {\n    let name = String::from(\"Rust\");\n    let result = take_and_return_ownership(name, \"acean\");\n    println!(\"Appended: {}\", result);\n}\n",
+    "testCode": "\n#[cfg(test)]\nmod tests {\n    use super::*;\n\n    #[test]\n    fn test_ownership_transfer() {\n        let original = String::from(\"Rusty\");\n        let modified = take_and_return_ownership(original, \" Crab\");\n        assert_eq!(modified, \"Rusty Crab\");\n    }\n\n    #[test]\n    fn test_duplicate_data() {\n        let base = String::from(\"Ferris\");\n        let (first, second) = duplicate_data(&base);\n        assert_eq!(first, \"Ferris\");\n        assert_eq!(second, \"Ferris\");\n        assert_eq!(base, \"Ferris\");\n    }\n}\n",
+    "validationMode": "tests"
+  },
+  {
+    "id": "05-references-borrowing",
+    "title": "5. References & Borrowing (`&` vs `&mut`)",
+    "category": "2. Ownership & Memory",
+    "difficulty": "intermediate",
+    "summary": "Borrow values without transferring ownership, adhering to Rust’s borrow checker rules.",
+    "theory": "### Borrowing\n\nPassing an object by value moves ownership. But what if a function just needs to inspect or modify the data without taking ownership?\nWe pass a **reference** using the `&` symbol. This is called **borrowing**.\n\n```rust\nfn calculate_len(s: &String) -> usize {\n    s.len()\n} // s goes out of scope, but because it does not own the data, nothing is dropped!\n```\n\n#### Mutable References (`&mut`)\nTo modify borrowed data, use a mutable reference:\n```rust\nfn append_world(s: &mut String) {\n    s.push_str(\" world\");\n}\n```\n\n#### The Golden Rule of References:\nAt any given time, you can have:\n- **Either** any number of immutable references (`&T`)\n- **OR** exactly one mutable reference (`&mut T`)\n- References must always be valid (no dangling pointers).",
+    "requirements": [
+      "Implement `get_word_count(s: &str) -> usize` which counts words without taking ownership",
+      "Implement `shout(s: &mut String)` which converts the borrowed string in-place to uppercase",
+      "Do not allocate new copies when modifying in-place"
+    ],
+    "hints": [
+      "Clue 1: Use `s.split_whitespace().count()` to count words from a string slice.",
+      "Clue 2: For `shout`, you can do `*s = s.to_uppercase();`. The dereference `*s` modifies the value at the pointer target."
+    ],
+    "starterCode": "// Challenge 5: References & Borrowing\n\npub fn get_word_count(text: &str) -> usize {\n    // TODO: Count words in text without taking ownership\n    todo!()\n}\n\npub fn shout(text: &mut String) {\n    // TODO: Mutate text in-place to uppercase\n    todo!()\n}\n\nfn main() {\n    let mut message = String::from(\"rust is amazing\");\n    println!(\"Words: {}\", get_word_count(&message));\n    shout(&mut message);\n    println!(\"Shouted: {}\", message);\n}\n",
+    "solutionCode": "pub fn get_word_count(text: &str) -> usize {\n    text.split_whitespace().count()\n}\n\npub fn shout(text: &mut String) {\n    *text = text.to_uppercase();\n}\n\nfn main() {\n    let mut message = String::from(\"rust is amazing\");\n    println!(\"Words: {}\", get_word_count(&message));\n    shout(&mut message);\n    println!(\"Shouted: {}\", message);\n}\n",
+    "testCode": "\n#[cfg(test)]\nmod tests {\n    use super::*;\n\n    #[test]\n    fn test_word_count() {\n        assert_eq!(get_word_count(\"The quick brown fox\"), 4);\n        assert_eq!(get_word_count(\"   lone   \"), 1);\n        assert_eq!(get_word_count(\"\"), 0);\n    }\n\n    #[test]\n    fn test_shout_mutation() {\n        let mut msg = String::from(\"hello crab\");\n        shout(&mut msg);\n        assert_eq!(msg, \"HELLO CRAB\");\n    }\n}\n",
+    "validationMode": "tests"
+  },
+  {
+    "id": "06-structs-methods",
+    "title": "6. Structs & Methods (`impl` & `&self`)",
+    "category": "3. Data Structures",
+    "difficulty": "beginner",
+    "summary": "Define custom data types with named fields and attach methods via `impl` blocks.",
+    "theory": "### Structs in Rust\n\nStructs let you group related values together:\n\n```rust\nstruct User {\n    username: String,\n    active: bool,\n    sign_in_count: u64,\n}\n```\n\n#### Methods and Associated Functions\nMethods are functions defined inside an `impl` block that take `&self`, `&mut self`, or `self` as their first argument:\n\n```rust\nstruct Rectangle {\n    width: u32,\n    height: u32,\n}\n\nimpl Rectangle {\n    // Associated function (constructor) - called as Rectangle::new(...)\n    pub fn new(width: u32, height: u32) -> Self {\n        Self { width, height }\n    }\n\n    // Method - called on an instance as rect.area()\n    pub fn area(&self) -> u32 {\n        self.width * self.height\n    }\n}\n```",
+    "requirements": [
+      "Define a struct `Rectangle` with fields `pub width: u32` and `pub height: u32`",
+      "Implement `Rectangle::new(width: u32, height: u32) -> Rectangle`",
+      "Implement `area(&self) -> u32`",
+      "Implement `can_hold(&self, other: &Rectangle) -> bool` that checks if `self` can fit `other` inside both dimensions"
+    ],
+    "hints": [
+      "Clue 1: Remember to put `#[derive(Debug, PartialEq)]` above `pub struct Rectangle` for easy comparison and debugging.",
+      "Clue 2: Inside `impl Rectangle`, use `pub fn new(...) -> Self { Self { width, height } }`.",
+      "Clue 3: For `can_hold`, check: `self.width > other.width && self.height > other.height`."
+    ],
+    "starterCode": "// Challenge 6: Structs & Methods\n\n#[derive(Debug, PartialEq)]\npub struct Rectangle {\n    pub width: u32,\n    pub height: u32,\n}\n\nimpl Rectangle {\n    pub fn new(width: u32, height: u32) -> Self {\n        todo!()\n    }\n\n    pub fn area(&self) -> u32 {\n        todo!()\n    }\n\n    pub fn can_hold(&self, other: &Rectangle) -> bool {\n        todo!()\n    }\n}\n\nfn main() {\n    let rect1 = Rectangle::new(30, 50);\n    let rect2 = Rectangle::new(10, 40);\n    println!(\"Area: {}\", rect1.area());\n    println!(\"Can hold rect2? {}\", rect1.can_hold(&rect2));\n}\n",
+    "solutionCode": "#[derive(Debug, PartialEq)]\npub struct Rectangle {\n    pub width: u32,\n    pub height: u32,\n}\n\nimpl Rectangle {\n    pub fn new(width: u32, height: u32) -> Self {\n        Self { width, height }\n    }\n\n    pub fn area(&self) -> u32 {\n        self.width * self.height\n    }\n\n    pub fn can_hold(&self, other: &Rectangle) -> bool {\n        self.width > other.width && self.height > other.height\n    }\n}\n\nfn main() {\n    let rect1 = Rectangle::new(30, 50);\n    let rect2 = Rectangle::new(10, 40);\n    println!(\"Area: {}\", rect1.area());\n    println!(\"Can hold rect2? {}\", rect1.can_hold(&rect2));\n}\n",
+    "testCode": "\n#[cfg(test)]\nmod tests {\n    use super::*;\n\n    #[test]\n    fn test_area() {\n        let r = Rectangle::new(5, 10);\n        assert_eq!(r.area(), 50);\n    }\n\n    #[test]\n    fn test_can_hold() {\n        let outer = Rectangle::new(8, 7);\n        let inner = Rectangle::new(5, 6);\n        let large = Rectangle::new(10, 10);\n\n        assert!(outer.can_hold(&inner));\n        assert!(!outer.can_hold(&large));\n    }\n}\n",
+    "validationMode": "tests"
+  },
+  {
+    "id": "07-enums-pattern-matching",
+    "title": "7. Enums & Pattern Matching (`match`)",
+    "category": "3. Data Structures",
+    "difficulty": "intermediate",
+    "summary": "Model rich domain entities with tagged unions and write exhaustive `match` expressions.",
+    "theory": "### Enums with Data\n\nRust enums are much more powerful than enums in C or Java. Each variant can carry distinct data:\n\n```rust\nenum WebEvent {\n    PageLoad,\n    KeyPress(char),\n    Paste(String),\n    Click { x: i64, y: i64 },\n}\n```\n\n#### Exhaustive Pattern Matching (`match`)\nThe compiler forces `match` to cover **every single possible case**. If you miss one, the code will not compile!\n\n```rust\nmatch event {\n    WebEvent::PageLoad => println!(\"Loaded!\"),\n    WebEvent::KeyPress(c) => println!(\"Pressed {}\", c),\n    WebEvent::Paste(s) => println!(\"Pasted: {}\", s),\n    WebEvent::Click { x, y } => println!(\"Clicked at {}, {}\", x, y),\n}\n```",
+    "requirements": [
+      "Define an enum `TrafficLight` with variants `Red`, `Yellow`, `Green`",
+      "Implement `time_seconds(&self) -> u32`: Red = 60, Yellow = 5, Green = 45",
+      "Implement `next(&self) -> TrafficLight`: Red -> Green, Green -> Yellow, Yellow -> Red"
+    ],
+    "hints": [
+      "Clue 1: Add `#[derive(Debug, PartialEq, Clone, Copy)]` on your enum.",
+      "Clue 2: In `time_seconds`, use `match self { TrafficLight::Red => 60, ... }`.",
+      "Clue 3: In `next`, return the next state accordingly."
+    ],
+    "starterCode": "// Challenge 7: Enums & Pattern Matching\n\n#[derive(Debug, PartialEq, Clone, Copy)]\npub enum TrafficLight {\n    Red,\n    Yellow,\n    Green,\n}\n\nimpl TrafficLight {\n    pub fn time_seconds(&self) -> u32 {\n        // TODO: Red = 60, Yellow = 5, Green = 45\n        todo!()\n    }\n\n    pub fn next(&self) -> TrafficLight {\n        // TODO: Red -> Green -> Yellow -> Red\n        todo!()\n    }\n}\n\nfn main() {\n    let light = TrafficLight::Green;\n    println!(\"Light duration: {}s\", light.time_seconds());\n    println!(\"Next light: {:?}\", light.next());\n}\n",
+    "solutionCode": "#[derive(Debug, PartialEq, Clone, Copy)]\npub enum TrafficLight {\n    Red,\n    Yellow,\n    Green,\n}\n\nimpl TrafficLight {\n    pub fn time_seconds(&self) -> u32 {\n        match self {\n            TrafficLight::Red => 60,\n            TrafficLight::Yellow => 5,\n            TrafficLight::Green => 45,\n        }\n    }\n\n    pub fn next(&self) -> TrafficLight {\n        match self {\n            TrafficLight::Red => TrafficLight::Green,\n            TrafficLight::Green => TrafficLight::Yellow,\n            TrafficLight::Yellow => TrafficLight::Red,\n        }\n    }\n}\n\nfn main() {\n    let light = TrafficLight::Green;\n    println!(\"Light duration: {}s\", light.time_seconds());\n    println!(\"Next light: {:?}\", light.next());\n}\n",
+    "testCode": "\n#[cfg(test)]\nmod tests {\n    use super::*;\n\n    #[test]\n    fn test_durations() {\n        assert_eq!(TrafficLight::Red.time_seconds(), 60);\n        assert_eq!(TrafficLight::Yellow.time_seconds(), 5);\n        assert_eq!(TrafficLight::Green.time_seconds(), 45);\n    }\n\n    #[test]\n    fn test_transitions() {\n        assert_eq!(TrafficLight::Red.next(), TrafficLight::Green);\n        assert_eq!(TrafficLight::Green.next(), TrafficLight::Yellow);\n        assert_eq!(TrafficLight::Yellow.next(), TrafficLight::Red);\n    }\n}\n",
+    "validationMode": "tests"
+  },
+  {
+    "id": "08-option-handling",
+    "title": "8. Null-Free Safety with `Option<T>`",
+    "category": "4. Error Handling & Safety",
+    "difficulty": "intermediate",
+    "summary": "Replace hazardous null pointer exceptions with Rust’s type-safe `Option<T>`.",
+    "theory": "### Tony Hoare’s \"Billion-Dollar Mistake\"\n\nTony Hoare invented the null pointer in 1965 and later called it his \"billion-dollar mistake\" because of the countless crashes and vulnerabilities it created.\n\nRust has **no null pointers**. Instead, optionality is encoded into the type system:\n\n```rust\nenum Option<T> {\n    Some(T),\n    None,\n}\n```\n\nIf a function might not return a value, the return type is `Option<T>`. You cannot accidentally use `T` without checking for `None`!\n\n#### Working with Option:\n```rust\nlet opt: Option<i32> = Some(42);\n\n// 1. match\nmatch opt {\n    Some(v) => println!(\"Value: {}\", v),\n    None => println!(\"Empty!\"),\n}\n\n// 2. unwrap_or\nlet value = opt.unwrap_or(0);\n\n// 3. map\nlet doubled = opt.map(|x| x * 2);\n```",
+    "requirements": [
+      "Implement `safe_divide(dividend: f64, divisor: f64) -> Option<f64>` that returns `None` if `divisor == 0.0`, otherwise `Some(dividend / divisor)`",
+      "Implement `find_first_even(numbers: &[i32]) -> Option<i32>` that returns the first even number found, or `None`"
+    ],
+    "hints": [
+      "Clue 1: In `safe_divide`, check if `divisor == 0.0`. If so, return `None`. Otherwise return `Some(dividend / divisor)`.",
+      "Clue 2: In `find_first_even`, loop over `numbers` with `for &n in numbers`. If `n % 2 == 0`, immediately return `Some(n)`. At end of function, return `None`."
+    ],
+    "starterCode": "// Challenge 8: Option<T>\n\npub fn safe_divide(dividend: f64, divisor: f64) -> Option<f64> {\n    // TODO: Return None if divisor is 0.0, else Some(dividend / divisor)\n    todo!()\n}\n\npub fn find_first_even(numbers: &[i32]) -> Option<i32> {\n    // TODO: Return the first even number in numbers, or None\n    todo!()\n}\n\nfn main() {\n    println!(\"10 / 2 = {:?}\", safe_divide(10.0, 2.0));\n    println!(\"10 / 0 = {:?}\", safe_divide(10.0, 0.0));\n    println!(\"First even: {:?}\", find_first_even(&[1, 3, 4, 7]));\n}\n",
+    "solutionCode": "pub fn safe_divide(dividend: f64, divisor: f64) -> Option<f64> {\n    if divisor == 0.0 {\n        None\n    } else {\n        Some(dividend / divisor)\n    }\n}\n\npub fn find_first_even(numbers: &[i32]) -> Option<i32> {\n    for &n in numbers {\n        if n % 2 == 0 {\n            return Some(n);\n        }\n    }\n    None\n}\n\nfn main() {\n    println!(\"10 / 2 = {:?}\", safe_divide(10.0, 2.0));\n    println!(\"10 / 0 = {:?}\", safe_divide(10.0, 0.0));\n    println!(\"First even: {:?}\", find_first_even(&[1, 3, 4, 7]));\n}\n",
+    "testCode": "\n#[cfg(test)]\nmod tests {\n    use super::*;\n\n    #[test]\n    fn test_safe_divide() {\n        assert_eq!(safe_divide(10.0, 2.0), Some(5.0));\n        assert_eq!(safe_divide(7.0, 0.0), None);\n    }\n\n    #[test]\n    fn test_find_first_even() {\n        assert_eq!(find_first_even(&[1, 3, 8, 9, 10]), Some(8));\n        assert_eq!(find_first_even(&[1, 3, 5]), None);\n        assert_eq!(find_first_even(&[]), None);\n    }\n}\n",
+    "validationMode": "tests"
+  },
+  {
+    "id": "09-result-question-mark",
+    "title": "9. Error Handling with `Result<T, E>` & `?`",
+    "category": "4. Error Handling & Safety",
+    "difficulty": "intermediate",
+    "summary": "Handle recoverable errors idiomatically using `Result` and propagate them cleanly with `?`.",
+    "theory": "### The `Result<T, E>` Type\n\nFor operations that can fail with an error, Rust uses:\n\n```rust\nenum Result<T, E> {\n    Ok(T),\n    Err(E),\n}\n```\n\n#### Propagating Errors with the `?` Operator\nInstead of writing repetitive `match` blocks to unpack every error, Rust provides the `?` operator.\nWhen placed after a `Result`:\n- If `Ok(v)`, it extracts `v` and execution proceeds.\n- If `Err(e)`, it **early-returns** `Err(e)` from the current function!\n\n```rust\nfn parse_and_add(s1: &str, s2: &str) -> Result<i32, std::num::ParseIntError> {\n    let n1 = s1.parse::<i32>()?; // returns early if parse fails\n    let n2 = s2.parse::<i32>()?;\n    Ok(n1 + n2)\n}\n```",
+    "requirements": [
+      "Implement `parse_percentage(input: &str) -> Result<u32, String>`",
+      "Remove trailing `%` if present using `input.trim().trim_end_matches('%')`",
+      "Parse into `u32`. If parsing fails, return `Err(\"Invalid number format\".to_string())`",
+      "If the parsed value is greater than 100, return `Err(\"Percentage cannot exceed 100\".to_string())`",
+      "Otherwise return `Ok(value)`"
+    ],
+    "hints": [
+      "Clue 1: Trim and strip the `%`: `let clean = input.trim().trim_end_matches('%');`.",
+      "Clue 2: Use `clean.parse::<u32>().map_err(|_| \"Invalid number format\".to_string())?`.",
+      "Clue 3: Check `if val > 100 { return Err(\"Percentage cannot exceed 100\".to_string()); } Ok(val)`."
+    ],
+    "starterCode": "// Challenge 9: Error Handling with Result<T, E>\n\npub fn parse_percentage(input: &str) -> Result<u32, String> {\n    // TODO:\n    // 1. Strip whitespace and optional trailing '%'\n    // 2. Parse as u32 (returning Err(\"Invalid number format\".to_string()) if parsing fails)\n    // 3. Ensure <= 100 (returning Err(\"Percentage cannot exceed 100\".to_string()) if > 100)\n    // 4. Return Ok(val)\n    todo!()\n}\n\nfn main() {\n    println!(\"{:?}\", parse_percentage(\"75%\"));\n    println!(\"{:?}\", parse_percentage(\"120%\"));\n    println!(\"{:?}\", parse_percentage(\"invalid\"));\n}\n",
+    "solutionCode": "pub fn parse_percentage(input: &str) -> Result<u32, String> {\n    let clean = input.trim().trim_end_matches('%').trim();\n    let val: u32 = clean\n        .parse()\n        .map_err(|_| \"Invalid number format\".to_string())?;\n\n    if val > 100 {\n        return Err(\"Percentage cannot exceed 100\".to_string());\n    }\n\n    Ok(val)\n}\n\nfn main() {\n    println!(\"{:?}\", parse_percentage(\"75%\"));\n    println!(\"{:?}\", parse_percentage(\"120%\"));\n    println!(\"{:?}\", parse_percentage(\"invalid\"));\n}\n",
+    "testCode": "\n#[cfg(test)]\nmod tests {\n    use super::*;\n\n    #[test]\n    fn test_valid_percentages() {\n        assert_eq!(parse_percentage(\"50%\"), Ok(50));\n        assert_eq!(parse_percentage(\"  100 % \"), Ok(100));\n        assert_eq!(parse_percentage(\"0\"), Ok(0));\n    }\n\n    #[test]\n    fn test_out_of_bounds() {\n        assert_eq!(\n            parse_percentage(\"105%\"),\n            Err(\"Percentage cannot exceed 100\".to_string())\n        );\n    }\n\n    #[test]\n    fn test_invalid_input() {\n        assert_eq!(\n            parse_percentage(\"hello\"),\n            Err(\"Invalid number format\".to_string())\n        );\n    }\n}\n",
+    "validationMode": "tests"
+  },
+  {
+    "id": "10-iterators-functional",
+    "title": "10. Iterators & Functional Pipelines",
+    "category": "5. Advanced & Idiomatic Rust",
+    "difficulty": "advanced",
+    "summary": "Write high-performance zero-cost iterator chains with `.map()`, `.filter()`, and `.collect()`.",
+    "theory": "### Zero-Cost Abstractions\n\nIn Rust, iterators are **lazy** — they do nothing until you consume them with methods like `.collect()` or `.sum()`.\nBest of all, Rust compiles iterator chains down to assembly code that is just as fast (and often faster due to loop unrolling) as hand-written C loops!\n\n#### Common Iterator Methods:\n```rust\nlet v = vec![1, 2, 3, 4, 5];\n\nlet squared_evens: Vec<i32> = v\n    .into_iter()\n    .filter(|x| x % 2 == 0) // Keep evens\n    .map(|x| x * x)         // Square each\n    .collect();             // Gather into vector: [4, 16]\n```",
+    "requirements": [
+      "Implement `process_scores(scores: &[i32]) -> Vec<i32>`",
+      "Filter out negative scores (`< 0`)",
+      "Add a curve bonus of `+5` points to each valid score",
+      "Cap the maximum score at `100` (if score > 100, clamp it to 100)",
+      "Collect and return the transformed `Vec<i32>`"
+    ],
+    "hints": [
+      "Clue 1: Start with `scores.iter().copied()`.",
+      "Clue 2: Filter out negatives using `.filter(|&s| s >= 0)`.",
+      "Clue 3: Map with `.map(|s| (s + 5).min(100))`.",
+      "Clue 4: Finish with `.collect()`."
+    ],
+    "starterCode": "// Challenge 10: Iterators & Functional Pipelines\n\npub fn process_scores(scores: &[i32]) -> Vec<i32> {\n    // TODO:\n    // 1. Filter out scores < 0\n    // 2. Add 5 to each score\n    // 3. Cap at 100\n    // 4. Collect into Vec<i32>\n    todo!()\n}\n\nfn main() {\n    let input = [80, 98, -10, 45];\n    let output = process_scores(&input);\n    println!(\"Processed scores: {:?}\", output);\n}\n",
+    "solutionCode": "pub fn process_scores(scores: &[i32]) -> Vec<i32> {\n    scores\n        .iter()\n        .copied()\n        .filter(|&s| s >= 0)\n        .map(|s| (s + 5).min(100))\n        .collect()\n}\n\nfn main() {\n    let input = [80, 98, -10, 45];\n    let output = process_scores(&input);\n    println!(\"Processed scores: {:?}\", output);\n}\n",
+    "testCode": "\n#[cfg(test)]\nmod tests {\n    use super::*;\n\n    #[test]\n    fn test_process_scores() {\n        let input = [80, 98, -5, 45, -1];\n        let expected = vec![85, 100, 50];\n        assert_eq!(process_scores(&input), expected);\n    }\n\n    #[test]\n    fn test_all_negative() {\n        assert_eq!(process_scores(&[-10, -20]), vec![]);\n    }\n}\n",
+    "validationMode": "tests"
+  }
+]

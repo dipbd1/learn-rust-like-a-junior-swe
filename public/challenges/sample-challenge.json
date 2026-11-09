@@ -1,0 +1,22 @@
+{
+  "id": "custom-palindrome-checker",
+  "title": "Custom: Palindrome Checker with Chars & DoubleEndedIterator",
+  "category": "Custom Practices",
+  "difficulty": "beginner",
+  "summary": "Check whether a word is an alphanumeric palindrome using Rust iterator adapters.",
+  "theory": "### Working with Strings & Iterators\n\nIn Rust, strings are UTF-8 encoded sequences of bytes. To inspect individual characters, use `.chars()`:\n\n```rust\nlet chars: Vec<char> = \"Rustacean\".chars().collect();\n```\n\nYou can also compare a forward iterator against a reverse iterator (`.rev()`):\n\n```rust\nlet clean: Vec<char> = s.chars()\n    .filter(|c| c.is_alphanumeric())\n    .map(|c| c.to_ascii_lowercase())\n    .collect();\n\nclean.iter().eq(clean.iter().rev())\n```",
+  "requirements": [
+    "Implement `pub fn is_palindrome(text: &str) -> bool`",
+    "Filter only alphanumeric characters and treat uppercase/lowercase identically",
+    "Return true if the text reads the same backward as forward, false otherwise"
+  ],
+  "hints": [
+    "Clue 1: Use `text.chars().filter(|c| c.is_alphanumeric()).map(|c| c.to_ascii_lowercase())`.",
+    "Clue 2: Collect the characters into a `Vec<char>`: `let chars: Vec<char> = ...collect();`.",
+    "Clue 3: Compare `chars.iter().eq(chars.iter().rev())`."
+  ],
+  "starterCode": "pub fn is_palindrome(text: &str) -> bool {\n    // TODO: Return true if text is palindrome, ignoring case & punctuation\n    todo!()\n}\n\nfn main() {\n    println!(\"is 'Racecar' palindrome? {}\", is_palindrome(\"Racecar\"));\n    println!(\"is 'Rust' palindrome? {}\", is_palindrome(\"Rust\"));\n}\n",
+  "solutionCode": "pub fn is_palindrome(text: &str) -> bool {\n    let chars: Vec<char> = text\n        .chars()\n        .filter(|c| c.is_alphanumeric())\n        .map(|c| c.to_ascii_lowercase())\n        .collect();\n\n    chars.iter().eq(chars.iter().rev())\n}\n\nfn main() {\n    println!(\"is 'Racecar' palindrome? {}\", is_palindrome(\"Racecar\"));\n    println!(\"is 'Rust' palindrome? {}\", is_palindrome(\"Rust\"));\n}\n",
+  "testCode": "\n#[cfg(test)]\nmod tests {\n    use super::*;\n\n    #[test]\n    fn test_palindromes() {\n        assert!(is_palindrome(\"Racecar\"));\n        assert!(is_palindrome(\"A man, a plan, a canal: Panama\"));\n        assert!(is_palindrome(\"\"));\n        assert!(is_palindrome(\"a\"));\n    }\n\n    #[test]\n    fn test_non_palindromes() {\n        assert!(!is_palindrome(\"Rust\"));\n        assert!(!is_palindrome(\"hello world\"));\n    }\n}\n",
+  "validationMode": "tests"
+}

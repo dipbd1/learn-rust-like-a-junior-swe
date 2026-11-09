@@ -1,0 +1,74 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "RustChallenge",
+  "type": "object",
+  "required": [
+    "id",
+    "title",
+    "category",
+    "difficulty",
+    "summary",
+    "theory",
+    "requirements",
+    "hints",
+    "starterCode",
+    "solutionCode",
+    "validationMode"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "description": "Unique URL-friendly slug, e.g. 'custom-fibonacci-match'"
+    },
+    "title": {
+      "type": "string",
+      "description": "Display title of the practice"
+    },
+    "category": {
+      "type": "string",
+      "description": "Grouping category, e.g. 'Fundamentals', 'Ownership & Memory', 'Data Structures'"
+    },
+    "difficulty": {
+      "type": "string",
+      "enum": ["beginner", "intermediate", "advanced"]
+    },
+    "summary": {
+      "type": "string",
+      "description": "One sentence summary shown under the title"
+    },
+    "theory": {
+      "type": "string",
+      "description": "Explanatory markdown explaining concepts, syntax, and code examples"
+    },
+    "requirements": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Checklist of objectives the student must accomplish"
+    },
+    "hints": {
+      "type": "array",
+      "items": { "type": "string" },
+      "description": "Progressive clues revealed one-by-one upon student request"
+    },
+    "starterCode": {
+      "type": "string",
+      "description": "Initial code template loaded into the editor"
+    },
+    "solutionCode": {
+      "type": "string",
+      "description": "Verified reference solution code"
+    },
+    "testCode": {
+      "type": "string",
+      "description": "Cargo test module: #[cfg(test)] mod tests { ... }"
+    },
+    "expectedOutput": {
+      "type": "string",
+      "description": "Expected standard output if validationMode is 'output'"
+    },
+    "validationMode": {
+      "type": "string",
+      "enum": ["tests", "output", "compile"]
+    }
+  }
+}
